@@ -24,7 +24,7 @@ packaging==23.1
 pipreqs==0.4.13
 PyJWT==2.7.0
 pymongo==4.3.3
-python-dotenv==1.0.0
+python-dotenv==0.21.1
 pytz==2023.3
 requests==2.30.0
 six==1.16.0
