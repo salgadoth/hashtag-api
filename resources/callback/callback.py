@@ -14,19 +14,18 @@ class CallbackReciever(Resource):
         callback : CallbackReq = CallbackReq(**request.get_json())
         print('---🔍---TRATATIVAS---🔎---')
         
-        match callback.status:
-            case 'aprovado':
-                response = {'status': 'Callback recebido.',
-                        'desc' : 'Cliente liberado acesso, mensagem enviada.'}
-            case 'reprovado':
-                response = {'status' : 'Callback recebido.',
-                        'desc' : 'Pagamento reprovado.'}
-            case 'reembolsado':
-                response =  {'status' : 'Callback recebido.',
-                        'desc' : 'Acesso ao curso revogado.'}
-            case _:
-                response = {'status' : 'Callback recebido.',
-                        'desc' : 'Status incorreto.'}
+        if(callback.status == 'aprovado'):
+            response = {'status': 'Callback recebido.',
+                'desc' : 'Cliente liberado acesso, mensagem enviada.'}
+        elif(callback.status == 'reprovado'):
+            response = {'status' : 'Callback recebido.',
+                'desc' : 'Pagamento reprovado.'}
+        elif(callback.status == 'reembolsado'):
+            response =  {'status' : 'Callback recebido.',
+                'desc' : 'Acesso ao curso revogado.'}
+        else:
+            response = {'status' : 'Callback recebido.',
+                'desc' : 'Status incorreto.'}
 
         callback.tratativas = json.dumps(response)
 
