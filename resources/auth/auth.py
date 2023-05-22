@@ -21,29 +21,32 @@ class LoginApi(Resource):
         
         result = DataBaseService().getUser(user.email)
 
-        userDB = UserCollection(**result)
+        try:
+            userDB = UserCollection(**result)
 
-        user.pwd = user.pwd.encode('utf-8')
-    
-        userDB.pwd = userDB.pwd.encode('utf-8')
+            user.pwd = user.pwd.encode('utf-8')
+        
+            userDB.pwd = userDB.pwd.encode('utf-8')
 
-        if len(result) > 0 and bcrypt.checkpw(user.pwd, userDB.pwd):
-            expires = datetime.timedelta(hours=3)
-            expiresAt = datetime.datetime.now() + expires
-            if userDB.token == secret["value"]:
-                additional_claims = {"token": True,
-                                     "email": user.email}
-                access_token = create_access_token(identity=str(userDB.name),
-                                                additional_claims= additional_claims,
-                                                expires_delta=expires)
-                return {"token": access_token,
-                        "expires_at": str(expiresAt)}, 200
+            if bcrypt.checkpw(user.pwd, userDB.pwd):
+                expires = datetime.timedelta(hours=3)
+                expiresAt = datetime.datetime.now() + expires
+                if userDB.token == secret["value"]:
+                    additional_claims = {"token": True,
+                                        "email": user.email}
+                    access_token = create_access_token(identity=str(userDB.name),
+                                                    additional_claims= additional_claims,
+                                                    expires_delta=expires)
+                    return {"token": access_token,
+                            "expires_at": str(expiresAt)}, 200
+                else:
+                    access_token = create_access_token(identity=str(user.name),
+                                                    expires_delta=expires)
+                    return {"token": access_token,
+                            "expires_at": str(expiresAt)}, 200
             else:
-                access_token = create_access_token(identity=str(user.name),
-                                                expires_delta=expires)
-                return {"token": access_token,
-                        "expires_at": str(expiresAt)}, 200
-        else:
+                return {"error": "Credenciais incorretas."}, 400
+        except TypeError:
             return {"error": "Credenciais incorretas."}, 400
         
 class SignUpApi(Resource):
